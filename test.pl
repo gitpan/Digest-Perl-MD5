@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+
 use Test;
 use strict;
 use lib './lib';
@@ -5,8 +7,6 @@ use lib './lib';
 BEGIN {plan tests => 5}
 
 use Digest::Perl::MD5 qw(md5 md5_hex md5_base64);
-
-
 
 # 1 Testsuite
 print "Trying md5_hex on test suite...\n";
@@ -24,19 +24,22 @@ ok( md5_hex('') eq 'd41d8cd98f00b204e9800998ecf8427e' and
 
 # 2 md5_base64
 print "Trying md5_base64...\n";
-ok ( md5_base64('delta') eq 'Y7yr+GqamRhkd3xjHFt2Fw' );
+ok ( md5_base64('delta' x 23) eq 'RzlmC2a3rRVNgaZrwusL0Q' and
+     md5_base64('carmen' x 26) eq 'WVM3kMiFLRPPRMOo7DQr2w' and
+     md5_base64('imperia' x 42) eq 'IjqzkaH6J3rDdQWHuiWuXg'
+);
 
 # 3 Object
 print "Testing MD5-Object...\n";
 my $c = new Digest::Perl::MD5;
 $c->add('XdeltaX');
-ok( $c->b64digest eq 'hLA/iI1q1iIKz+uffnsN6w');
+ok( $c->b64digest eq 'hLA/iI1q1iIKz+uffnsN6w' );
 $c->reset;
 
 open FILE, './lib/Digest/Perl/MD5.pm' or die $!;
-print $c->addfile(*FILE)->hexdigest,"\n"; # DEBUG
+#print $c->addfile(*FILE)->hexdigest,"\n"; # DEBUG
 # 4 Object 2
-ok ( $c->addfile(*FILE)->hexdigest eq '24e998f1464ac1a26f037e292b0a9b0a');
+ok ( $c->addfile(*FILE)->hexdigest eq 'd3efa01daaf0fccd8d7bdfdf9c7d9d6d');
 
 # 5 Speed-Test
 print "Speed-Test (be patient)...\n";
