@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl -w
-#$Id$
+#$Id: MD5.pm,v 1.8 2000/09/02 15:22:21 lackas Exp $
 
-require 5.004;
+#require 5.004;
 package Digest::Perl::MD5;
 use strict;
 use vars qw($VERSION @ISA @EXPORTER @EXPORT_OK);
@@ -9,16 +9,21 @@ use vars qw($VERSION @ISA @EXPORTER @EXPORT_OK);
 @EXPORT_OK = qw(md5 md5_hex md5_base64);
 
 @ISA = 'Exporter';
-$VERSION = '1.2';
+$VERSION = '1.3';
 
 # I-Vektor
-use constant A => 0x67_45_23_01;
-use constant B => 0xef_cd_ab_89;
-use constant C => 0x98_ba_dc_fe;
-use constant D => 0x10_32_54_76;
+#use constant A => 0x67_45_23_01;
+#use constant B => 0xef_cd_ab_89;
+#use constant C => 0x98_ba_dc_fe;
+#use constant D => 0x10_32_54_76;
+sub A() { 0x67_45_23_01 }
+sub B() { 0xef_cd_ab_89 }
+sub C() { 0x98_ba_dc_fe }
+sub D() { 0x10_32_54_76 }
 
 # for internal use
-use constant MAX  => 0xFFFFFFFF;
+#use constant MAX  => 0xFFFFFFFF;
+sub MAX() { 0xFFFFFFFF }
 
 # padd a message to a multiple of 64
 sub padding($) {
@@ -137,7 +142,8 @@ sub round($$$$@) {
 
 # object part of this module
 sub new {
-	bless {}, shift;
+	my $class = shift;
+	bless {}, ref($class) || $class;
 }
 
 sub reset {
@@ -154,6 +160,10 @@ sub add(@) {
 
 sub addfile {
   	my ($self,$fh) = @_;
+	if (!ref($fh) && ref(\$fh) ne "GLOB") {
+	    require Symbol;
+	    $fh = Symbol::qualify($fh, scalar(caller));
+	}
 	$self->{data} .= do{local$/;<$fh>};
 	$self
 }
@@ -170,10 +180,11 @@ sub b64digest {
 	md5_base64(shift->{data})
 }
 
-sub md5($) {
-	my $message = padding(shift);
+sub md5(@) {
+	my $message = padding(join'',@_);
 	my ($a,$b,$c,$d) = (A,B,C,D);
-	for my $i (0 .. (length $message)/64-1) {
+	my $i;
+	for $i (0 .. (length $message)/64-1) {
 		my @X = unpack 'V16', substr($message,$i*64,64);	
 		($a,$b,$c,$d) = round($a,$b,$c,$d,@X);
 	}
@@ -181,12 +192,12 @@ sub md5($) {
 }
 
 
-sub md5_hex($) {  
-  unpack 'H*', md5(shift);
+sub md5_hex(@) {  
+  unpack 'H*', &md5;
 }
 
-sub md5_base64($) {
-  encode_base64(md5(shift));
+sub md5_base64(@) {
+  encode_base64(&md5);
 }
 
 

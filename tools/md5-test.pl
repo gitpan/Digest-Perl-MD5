@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-
+# $Id: md5-test.pl,v 1.2 2000/08/19 01:20:52 lackas Exp $
 use strict;
 use lib qw'./lib ../lib';
 use Digest::Perl::MD5;
