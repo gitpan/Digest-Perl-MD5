@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# $Id: test.pl,v 1.6 2000/09/17 15:55:23 lackas Exp $
+# $Id: test.pl,v 1.7 2000/09/19 22:19:31 lackas Exp $
 
 use Test;
 use strict;
@@ -56,7 +56,7 @@ close FILE;
 
 # 6 Speed-Test
 print "Speed-Test (please be patient)...\n";
-my $count = 10_000;
+my $count = 50_000;
 my $t1 = time;
 for (1..$count) { md5('delta') } # encode 64Byte blocks
 my $t2 = time;
