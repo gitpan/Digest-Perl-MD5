@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# $Id: test.pl,v 1.4 2000/08/19 01:20:22 lackas Exp $
+# $Id: test.pl,v 1.6 2000/09/17 15:55:23 lackas Exp $
 
 use Test;
 use strict;
@@ -48,14 +48,15 @@ ok( $c->b64digest eq 'hLA/iI1q1iIKz+uffnsN6w' );
 $c->reset;
 
 open FILE, './rand.f' or die $!;
+binmode FILE;
 #print $c->addfile(*FILE)->hexdigest,"\n"; # DEBUG
 # 5 Object 2
-ok ( $c->addfile(*FILE)->hexdigest eq '2cc2c8b037522964694985b3f9c88b1e');
+ok ( $c->addfile(*FILE)->hexdigest eq '2cc2c8b037522964694985b3f9c88b1e' );
 close FILE;
 
 # 6 Speed-Test
-print "Speed-Test (be patient)...\n";
-my $count = 5_000;
+print "Speed-Test (please be patient)...\n";
+my $count = 10_000;
 my $t1 = time;
 for (1..$count) { md5('delta') } # encode 64Byte blocks
 my $t2 = time;

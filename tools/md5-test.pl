@@ -1,5 +1,12 @@
 #!/usr/bin/perl -w
-# $Id: md5-test.pl,v 1.2 2000/08/19 01:20:52 lackas Exp $
+# $Id: md5-test.pl,v 1.4 2000/09/17 15:53:47 lackas Exp $
+
+# Compare results from Digest::Perl::MD5 with Digest::MD5
+# Press Ctrl-C to stop the test (on Unix)
+# Move Mouse to upper left corner to stop the test (on Windows - you need Win32::API)
+# prints 'ok' for every correct MD5 calculation and dies
+# if the results are different
+
 use strict;
 use lib qw'./lib ../lib';
 use Digest::Perl::MD5;
@@ -11,7 +18,16 @@ my ($count,$bytes) = 0;
 
 my $mult = 10;
 
-$SIG{INT} = sub{ print "\n$count rounds\n$bytes Bytes\n"; exit; };
+sub result { print "\n$count rounds\n$bytes Bytes\n"; exit; };
+
+my $GetCursorPos;
+if ($^O eq 'MSWin32') {
+	eval {	require Win32::API; $GetCursorPos = new Win32::API("user32", "GetCursorPos", ['P'], 'V') };
+} else {
+	$SIG{INT} = \&result;
+}
+
+
 
 $|++;
 while(1) {
@@ -22,11 +38,16 @@ while(1) {
 		      'Source: ',unpack('H*',$s),"\n",
 		      "pmd5  : $p\n",
 		      "xmd5  : $x\n";
-              exit;
+	      exit;
 	} else {
-    	print "ok ";
+	print "ok ";
     }
     $count++; $bytes+=length $s;
+    if (defined $GetCursorPos) {
+	my $lpPoint = pack "LL", 0, 0;
+	$GetCursorPos->Call($lpPoint);
+	result() if $lpPoint eq "\0\0\0\0\0\0\0\0";
+    }
 }
 
 sub gen {
