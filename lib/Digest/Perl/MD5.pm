@@ -1,6 +1,6 @@
 #! /usr/bin/false
 #
-# $Id: MD5.pm,v 1.19 2004/02/14 02:25:32 lackas Exp $
+# $Id: MD5.pm,v 1.23 2004/08/27 20:28:25 lackas Exp $
 #
 
 package Digest::Perl::MD5;
@@ -12,7 +12,7 @@ use vars qw($VERSION @ISA @EXPORTER @EXPORT_OK);
 @EXPORT_OK = qw(md5 md5_hex md5_base64);
 
 @ISA = 'Exporter';
-$VERSION = '1.6';
+$VERSION = '1.8';
 
 # I-Vektor
 sub A() { 0x67_45_23_01 }
@@ -60,7 +60,7 @@ sub gen_code {
 	S43 => 15, S44 => 21
   );
 
-  my $insert = "";
+  my $insert = "\n";
   while(<DATA>) {
 	chomp;
 	next unless /^[FGHI]/;
@@ -68,11 +68,16 @@ sub gen_code {
 	my $c = $f{$func};
 	$c =~ s/X(\d)/$x[$1]/g;
 	$c =~ s/(S\d{2})/$s{$1}/;
-        $c =~ s/^(.*)=rotate_left\((.*),(.*)\)\+(.*)$//;
+	$c =~ s/^(.*)=rotate_left\((.*),(.*)\)\+(.*)$//;
+
+	my $su = 32 - $3;
+	my $sh = (1 << $3) - 1;
+
+	$c = "$1=(((\$r=$2)<<$3)|((\$r>>$su)&$sh))+$4";
 
 	#my $rotate = "(($2 << $3) || (($2 >> (32 - $3)) & (1 << $2) - 1)))"; 
-	$c = "\$r = $2;
-        $1 = ((\$r << $3) | ((\$r >> (32 - $3))  & ((1 << $3) - 1))) + $4";
+	# $c = "\$r = $2;
+	# $1 = ((\$r << $3) | ((\$r >> (32 - $3))  & ((1 << $3) - 1))) + $4";
 	$insert .= "\t$c\n";
   }
   close DATA;
@@ -80,15 +85,13 @@ sub gen_code {
   my $dump = '
   sub round {
 	my ($a,$b,$c,$d) = @_[0 .. 3];
-	my $r;
-
-	' . $insert . '
+	my $r;' . $insert . '
 	$_[0]+$a' . $MSK . ', $_[1]+$b ' . $MSK . 
         ', $_[2]+$c' . $MSK . ', $_[3]+$d' . $MSK . ';
   }';
   eval $dump;
-  #print "$dump\n";
-  #exit 0;
+  # print "$dump\n";
+  # exit 0;
 }
 
 gen_code();
@@ -136,7 +139,7 @@ sub add {
 		++$c;
 	}
 	if ($c) {
-		substr $self->{_data}, 0, $c*64, '';
+		substr ($self->{_data}, 0, $c*64) = '';
 		$self->{_length} += $c*64;
 	}
 	$self
@@ -168,6 +171,11 @@ sub addfile {
 }
 
 sub add_bits {
+	my $self = shift;
+	return $self->add( pack 'B*', shift ) if @_ == 1;
+	my ($b,$n) = @_;
+	die __PACKAGE__, " Invalid number of bits\n" if $n%8;
+	$self->add( substr $b, 0, $n/8 )
 }
 
 sub digest {

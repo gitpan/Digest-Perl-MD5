@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# $Id: test.pl,v 1.8 2004/02/14 02:15:30 lackas Exp $
+# $Id: test.pl,v 1.11 2004/02/15 02:16:17 lackas Exp $
 
 use Test;
 use strict;
@@ -61,7 +61,7 @@ if (1) {
 
 # 5 Reset
 if (1) {
-	print "  - reset\n";
+	print "  - reset ";
 	my $c = new Digest::Perl::MD5;
 	$c->add('foo'); $c->reset(); $c->add('bar');
 	ok( $c->hexdigest eq md5_hex('bar') );
@@ -69,7 +69,7 @@ if (1) {
 
 # 5 Cloning
 if (1) {
-	print "  - clone\n";
+	print "  - clone ";
 	my $c = new Digest::Perl::MD5;
 	$c->add('YCarmenY'); my $d = $c->clone(); $c->add('ZKleinZ');
 	# use Data::Dumper; print Dumper($c,$d);
@@ -78,7 +78,7 @@ if (1) {
 
 # 6 Adding
 if (1) {
-	print "  - add\n";
+	print "  - add ";
 	my $c = new Digest::Perl::MD5;
 	my $anz = 256;
 	$c->add($_) for (0..$anz);
@@ -91,7 +91,7 @@ if (1) {
 
 # 7 Addfile
 if (1) {
-	print "  - addfile\n";
+	print "  - addfile ";
 	my $c = new Digest::Perl::MD5;
 	open FILE, './rand.f' or die $!;
 	binmode FILE;
@@ -100,10 +100,22 @@ if (1) {
 	close FILE;
 }
 
-# 8 Speed-Test
-if (0) {
+# 8 add_bits
+if (1) {
+	print "  - add_bits ";
+	my $c = new Digest::Perl::MD5;
+	eval { $c->add_bits('', 9) };
+	ok (
+		$@ and 
+		$c->add_bits('011000010110001001100011')->digest eq md5('abc') and
+		$c->add_bits('def', 16)->digest eq md5('de')
+	);
+}
+
+# 9 Speed-Test
+if (1) {
 	print "Speed-Test (please be patient)...\n";
-	my $count = 10; # 50_000;
+	my $count = $ENV{MD5_SPEED_TEST} || 50_000;
 	my $t1 = time;
 	for (1..$count) { md5('delta') } # encode 64Byte blocks
 	my $t2 = time;

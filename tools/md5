@@ -1,11 +1,10 @@
 #! /usr/local/bin/perl -w
 #
-# $Id: md5,v 1.1 2004/02/14 02:08:45 lackas Exp $
+# $Id: md5,v 1.2 2004/02/15 02:15:48 lackas Exp $
 #
 use strict;
-use lib 'lib';
 my $PP = 0;
-eval { require Digest::MD5x; };
+eval { require Digest::MD5; };
 require Digest::Perl::MD5, $PP = 1 if $@;
 my $ctx = $PP ? Digest::Perl::MD5->new() : Digest::MD5->new();
 
