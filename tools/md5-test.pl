@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# $Id: md5-test.pl,v 1.4 2000/09/17 15:53:47 lackas Exp $
+# $Id$
 
 # Compare results from Digest::Perl::MD5 with Digest::MD5
 # Press Ctrl-C to stop the test (on Unix)

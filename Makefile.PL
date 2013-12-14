@@ -1,4 +1,4 @@
-# $Id: Makefile.PL,v 1.3 2000/08/19 00:53:45 lackas Exp $
+# $Id$
 #
 
 use ExtUtils::MakeMaker;
@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'         => 'Digest::Perl::MD5',
     'VERSION_FROM' => './lib/Digest/Perl/MD5.pm', # finds $VERSION
-    'AUTHOR'       => 'Christian Lackas <delta@clackas.de>',
+    'AUTHOR'       => 'Christian Lackas <delta@lackas.net>',
     'ABSTRACT'     => 'Perl Implementation of Rivest\'s MD5 algorithm',
     'PREREQ_PM'    => {
                          'Exporter' => 0

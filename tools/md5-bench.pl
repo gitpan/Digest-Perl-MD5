@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-# $Id: md5-bench.pl,v 1.5 2004/02/15 00:55:02 lackas Exp $
+# $Id$
 # Benchmark
 # compares Digest::Perl::MD5 and Digest::MD5
 

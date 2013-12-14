@@ -1,6 +1,6 @@
 #! /usr/local/bin/perl -w
 #
-# $Id: md5,v 1.2 2004/02/15 02:15:48 lackas Exp $
+# $Id$
 #
 use strict;
 my $PP = 0;

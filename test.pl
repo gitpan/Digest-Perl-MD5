@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# $Id: test.pl,v 1.11 2004/02/15 02:16:17 lackas Exp $
+# $Id$
 
 use Test;
 use strict;
